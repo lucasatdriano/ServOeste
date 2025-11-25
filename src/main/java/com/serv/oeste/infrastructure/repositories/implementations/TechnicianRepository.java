@@ -3,7 +3,7 @@ package com.serv.oeste.infrastructure.repositories.implementations;
 import com.serv.oeste.domain.contracts.TechnicianAvailabilityProjection;
 import com.serv.oeste.domain.contracts.repositories.ITechnicianRepository;
 import com.serv.oeste.domain.entities.technician.Technician;
-import com.serv.oeste.domain.entities.technician.TechnicianAvailability;
+import com.serv.oeste.domain.valueObjects.TechnicianAvailability;
 import com.serv.oeste.domain.valueObjects.PageFilter;
 import com.serv.oeste.domain.valueObjects.PageResponse;
 import com.serv.oeste.domain.valueObjects.TechnicianFilter;
@@ -34,15 +34,20 @@ public class TechnicianRepository implements ITechnicianRepository {
     }
 
     @Override
+    public List<Technician> findAllById(List<Integer> ids) {
+        return technicianJpaRepository.findAllById(ids).stream()
+                .map(TechnicianEntity::toTechnician)
+                .toList();
+    }
+
+    @Override
     public Technician save(Technician technician) {
         return technicianJpaRepository.save(new TechnicianEntity(technician)).toTechnician();
     }
 
     @Override
-    public List<Technician> saveAll(List<Technician> technicians) {
-        return technicianJpaRepository.saveAll(technicians.stream().map(TechnicianEntity::new).toList()).stream()
-                .map(TechnicianEntity::toTechnician)
-                .toList();
+    public void saveAll(List<Technician> technicians) {
+        technicianJpaRepository.saveAll(technicians.stream().map(TechnicianEntity::new).toList());
     }
 
     @Override
